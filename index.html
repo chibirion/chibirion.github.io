@@ -1,26 +1,135 @@
+<?php
+@ob_start();
+@session_start();
+// System
+define( 'TTH_SYSTEM', true );
+
+$url = isset($_GET['url']) ? $_GET['url'] : 'home';
+$path = array();
+$path = explode('/',$url);
+if($path[0]=='en') {
+	$_SESSION["language"] = 'en';
+} elseif($path[0]=='vi') {
+	$_SESSION["language"] = 'vi';
+} else {
+	$_SESSION["language"] = 'vi';
+	array_unshift($path, 'vi');
+}
+//----------------------------------------------------------------------------------------------------------------------
+require_once(str_replace( DIRECTORY_SEPARATOR, '/', dirname( __file__ ) ) . '/define.php');
+//---
+require_once(ROOT_DIR . DS ."lang" . DS . TTH_LANGUAGE . ".lang");
+include_once(_F_FUNCTIONS . DS . "Function.php");
+try {
+	$db =  new ActiveRecord(TTH_DB_HOST, TTH_DB_USER, TTH_DB_PASS, TTH_DB_NAME);
+}
+catch(DatabaseConnException $e) {
+	echo $e->getMessage();
+}
+$account["id"] = empty($_SESSION["user_id"]) ? 0 : $_SESSION["user_id"]+0;
+include_once(_F_INCLUDES . DS . "_tth_constants.php");
+include_once(_F_INCLUDES . DS . "_tth_url.php");
+include_once(_F_INCLUDES . DS . "_tth_online_daily.php");
+?>
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title>Hướng dẫn sử dùng Github</title>
-		<link rel="stylesheet" href="style.css">
-	</head>
-	<body>
-		<h1>Github</h1>
-		<h2>NHUT ThEM VO</h2>
-		<h3>dkm</h3>
-		<div class="thongtin">
-			<p>git init</p>
-			<p>git add.</p>
-			<p>git remote add origin</p>
-			<p>git commit -m ""</p>
-			<p>git push origin master</p>
-			<p>Thank you</p>
-			<p>asdsadsad</p>
-			<P>asdasdsxcxzc</P>
-		</div>
-		<div class="testimg">
-			<img src="images/1.png" style="width: 100%;">
-		</div>
-	</body>
+<html lang="<?php echo TTH_LANGUAGE;?>">
+<head>
+<?php
+include(_F_INCLUDES . DS . "_tth_head.php");
+include(_F_INCLUDES . DS . "_tth_script.php");
+?>
+</head>
+<body>
+<?php
+echo getConstant('script_body');
+?>
+
+<!-- #wrapper -->
+<div id="wrapper">
+	<div class="socicalfooterfixed">
+					<a href="<?php echo getConstant('link_googleplus') ?>"> <img src="/images/footer/google.svg" style=""> </a>
+					<a href="<?php echo getConstant('link_facebook') ?>"> <img src="/images/footer/facebook.svg" style="margin-top: 5px;"> </a>
+					<a href="<?php echo getConstant('link_twitter') ?>"> <img src="/images/footer/twit.svg" style="margin-top: 5px;"> </a>
+	</div>
+	<?php
+	include(_F_INCLUDES . DS . "tth_header.php");
+	if($slug_cat == "home" || $slug_cat == "")
+	{
+		include(_F_INCLUDES . DS . "tth_slider.php");	
+	}
+	else{
+		
+	}
+    ?>
+	<!-- .container -->
+	<?php 
+		if($slug_cat == "home" || $slug_cat=="")
+		{
+			?>
+				<section class="container-fluid" style="max-width: 1920px; padding: 0">
+					<?php
+						include(_F_MODULES . DS .  str_replace('-','_',$slug_cat) . ".php");
+					?>
+				</section>
+			<?php
+		}
+		else{
+			?>	
+				<section class="container <?php if($slug_cat!='home') echo 'page'; ?>">
+					<?php
+						include(_F_MODULES . DS .  str_replace('-','_',$slug_cat) . ".php");
+					?>
+				</section>
+			<?php
+		}
+
+	?>
+	<div style="clear:both"></div>
+	<!-- / .container -->
+	<?php
+	include(_F_INCLUDES . DS . "tth_footer.php");
+	include(_F_INCLUDES . DS . "tth_menu_sm.php");
+	?>
+</div>
+<!-- / #wrapper -->
+<a href="javascript:void(0)" title="Lên đầu trang" id="go-top"></a>
+<div class="hotline-home" style="display: none">
+	<a href="tel:<?php echo getConstant('tell_contact');?>" rel="nofollow" > <div class="alo-phone alo-green alo-show"> <div class="alo-ph-circle"></div> <div class="alo-ph-circle-fill"></div> <div class="alo-ph-img-circle"></div> </div></a>
+</div>
+<div id="_loading"></div>
+<div id="_loading_popup"></div>
+<?php
+echo getConstant('script_bottom');
+$active = 0;
+$active = getPage('popup', 'is_active') + 0;
+if($active==1 && !isset($_SESSION['popup'])) {
+	require_once("popup" . DS . "popup.php");
+	$_SESSION['popup'] = 'OK';
+}
+?>
+
+
+
+<?php
+	$tel=getConstant('tell_contact');
+
+ ?>
+<div class="socialfixed" style="display: none" onclick="
+	var a = '<?php echo $tel ?>';
+	alert(a);
+">
+	
+	
+          <a href="tel:<?php echo $tel; ?>" rel="nofollow" class="nutgoidien">
+                <div class="alo-phone alo-green alo-show" style=""> 
+                    <div class="alo-ph-circle"></div>
+                    <div class="alo-ph-circle-fill"></div> 
+                    <div class="alo-ph-img-circle"></div> 
+                </div>
+            </a>
+</div>
+
+
+
+</body>
 </html>
